@@ -6,7 +6,7 @@ import click
 import asyncio_fast_portscanner
 import asyncio
 import json
-
+import itertools
 
 @click.group()
 @click.pass_context
@@ -40,7 +40,10 @@ def scan(ctx, range: str, ports, timeout, outputformat: str, sockettype: str, ra
     Range in RANGE format like 192.168.1-2.0-255
     This example produces 192.168.1.0 - 192.168.1.255 and 192.168.2.0 - 192.168.2.255 results
 
+    For bigger bunch of tasks you have to increase timeout, because it will always report as Closed (because task
+    will never have a chance to execute = timeout)
 
+    For example for scan 192.168.0-255.0-255 22 -r RANGE -v -t 5 - timeout of 10 seconds is enough
 
     """
     loop = asyncio.get_event_loop()
@@ -52,8 +55,10 @@ def scan(ctx, range: str, ports, timeout, outputformat: str, sockettype: str, ra
             conditionalClickEcho(verbose, result[1])
             return False
     elif rangetype.upper() == "RANGE":
-        conditionalClickEcho(verbose, "Not supported yet")
-        return False
+        result = loop.run_until_complete(scanner.loadHostListByRange(range))
+        if not result[0]:
+            conditionalClickEcho(verbose, result[1])
+            return False
 
     result = loop.run_until_complete(scanner.loadPortList(ports))
     if not result[0]:
@@ -61,13 +66,28 @@ def scan(ctx, range: str, ports, timeout, outputformat: str, sockettype: str, ra
         return False
 
     results = loop.run_until_complete(scanner.gatherResults())
-    gruped = groupResults(results, activeonly)
-    click.echo(json.dumps(gruped))
+    grouped = groupResults(results, activeonly)
+    if(outputformat == "JSON"):
+        click.echo(json.dumps(grouped))
+    elif(outputformat == "TEXT"):
+        for item in grouped:
+            print(item, end = "; ")
+            for port in grouped[item]["ports"]:
+                if(grouped[item]["ports"][port]):
+                    print(str(port), "Open", end = "; ")
+                else:
+                    print(str(port), "Closed", end = "; ")
+            print()
+
+
 
 
 def conditionalClickEcho(verbose, message):
     if verbose:
         click.echo(message)
+
+
+
 
 def groupResults(result, activeOnly):
     grouped = dict()
