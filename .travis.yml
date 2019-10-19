@@ -19,9 +19,9 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: Razikus
+  user: __token__
   password:
-    secure: PLEASE_REPLACE_ME
+    secure: "ydXcyqN3CXwoVznitRjfFu65j5DYu1FTEVblxlOLf7AwAjfa5Nd/oWllY2/MQHIo6yRB/A65V+S5bJUQ6prU9a4fQma3evI04MMXutD6b2ooj1UKongClHC9V0GtaSAJOcj1laQ7SRLoEQPLkJSSSN964YD+DsFlIvIy5KbbxYOw4H889R9LlhsAez4FcvYVPzyutu+7g9ItEccDgmGUtX/+D1kgeQ03dXoFN/cIs/RxNxNwH3JTpVZP2mOkyfBBZUKYgULP0hr9V3FUdnZTg6+EyyDI2RFPBEiwyqw+MAsgWT/EW2xZ1Sg3lXiEFuo4tNAxRGFObeqrjUNHe2DeVG3lM648zvJpSXjifVk7SlHIDuaDffkmzwo40fDtXuQMXJrXMtW1NruQsf07/QXm3YBYdP5+uK7cLDm6K4N0KU8urXftbt4VM1ENoHp8DQiCS41sx/hKG0FbMm1xtAyyNifBCbWlm9cX2NkruKQnIcT58LI0MubDTuqaMqjgT8wHEIwNdpVsQeRC+fOqO3/+KTFzeB8hZTWbyBPviXlSFHBQhOQAYDJ/pyI7Nog5QZGHz2GyktauOIdjMSEF3ONTxlJpB5RRjxD3L/Xv8WYPtTNJ04mVpUpXXvZf+N2U453c3aev09B41sp1jPB17cRpNFMPgYiPrWiElc88oaasVm0="
   on:
     tags: true
     repo: Razikus/asyncio_fast_portscanner
