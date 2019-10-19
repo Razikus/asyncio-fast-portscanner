@@ -66,7 +66,7 @@ class FastPortScanner():
         pipe = "-0-.-1-.-2-.-3-"
         for index in range(0, 4):
             if index not in indexes:
-                pipe = pipe.replace(f"-{index}-", splitted[index])
+                pipe = pipe.replace("-" + str(index) + "-", splitted[index])
 
         if (len(indexes) > 0):
             products = itertools.product(*lists)
@@ -74,7 +74,7 @@ class FastPortScanner():
                 pipeFormat = pipe
                 indexNow = 0
                 for index in indexes:
-                    pipeFormat = pipeFormat.replace(f"-{index}-", str(product[indexNow]))
+                    pipeFormat = pipeFormat.replace("-" + str(index) + "-", str(product[indexNow]))
                     indexNow = indexNow + 1
                 hostList.append(pipeFormat)
         else:
@@ -83,7 +83,7 @@ class FastPortScanner():
         ipRegex = re.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
         for host in hostList:
             if(not ipRegex.match(host)):
-                return False, f"{host} doesn't match ipv4 regex"
+                return False, host + " doesn't match ipv4 regex"
 
         if len(hostList) <= 0:
             return False, "List of hosts is empty"
@@ -116,6 +116,6 @@ class FastPortScanner():
         for host in self.hostList:
             for port in self.portList:
                 if (self.verboseLogging):
-                    print(f"Preparing task for {host}:{port}...")
+                    print("Preparing task for " + host + ":" + str(port) + "...")
                 tasks.append(FastPortScanner.tcp_check_timeout(host, port, self.timeout))
         return await asyncio.gather(*tasks)
