@@ -6,8 +6,8 @@ asyncio-fast-portscanner
 .. image:: https://img.shields.io/pypi/v/asyncio_fast_portscanner.svg
         :target: https://pypi.python.org/pypi/asyncio_fast_portscanner
 
-.. image:: https://img.shields.io/travis/Razikus/asyncio_fast_portscanner.svg
-        :target: https://travis-ci.org/Razikus/asyncio_fast_portscanner
+.. image:: https://img.shields.io/travis/Razikus/asyncio-fast-portscanner.svg
+        :target: https://travis-ci.org/Razikus/asyncio-fast-portscanner
 
 .. image:: https://readthedocs.org/projects/asyncio-fast-portscanner/badge/?version=latest
         :target: https://asyncio-fast-portscanner.readthedocs.io/en/latest/?badge=latest
