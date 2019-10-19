@@ -3,15 +3,14 @@
 """Console script for asyncio_fast_portscanner."""
 import sys
 import click
-import asyncio_fast_portscanner
+from .asyncio_fast_portscanner import FastPortScanner
 import asyncio
 import json
 import itertools
 
 @click.group()
-@click.pass_context
-def main(ctx):
-    return 1
+def main():
+    sys.exit(1)
 
 
 @main.command()
@@ -27,8 +26,7 @@ def main(ctx):
               type=click.Choice(["CIDR", "RANGE"], case_sensitive=False))
 @click.option("--verbose", "-v", default=False, is_flag=True)
 @click.option("--activeOnly", "-a", default=True, is_flag=True, help="Returns if at least one of the port is active, default true")
-@click.pass_context
-def scan(ctx, range: str, ports, timeout, outputformat: str, sockettype: str, rangetype: str, verbose: bool, activeonly: bool):
+def scan(range: str, ports, timeout, outputformat: str, sockettype: str, rangetype: str, verbose: bool, activeonly: bool):
     """Scans for hosts in specified range.
 
     Range in CIDR format like 192.168.1.1/24
@@ -47,23 +45,22 @@ def scan(ctx, range: str, ports, timeout, outputformat: str, sockettype: str, ra
 
     """
     loop = asyncio.get_event_loop()
-    ctx.statusCode = 1
-    scanner = asyncio_fast_portscanner.FastPortScanner(timeout, verbose)
+    scanner = FastPortScanner(timeout, verbose)
     if rangetype.upper() == "CIDR":
         result = loop.run_until_complete(scanner.loadHostListByCidr(range))
         if not result[0]:
             conditionalClickEcho(verbose, result[1])
-            return False
+            sys.exit(1)
     elif rangetype.upper() == "RANGE":
         result = loop.run_until_complete(scanner.loadHostListByRange(range))
         if not result[0]:
             conditionalClickEcho(verbose, result[1])
-            return False
+            sys.exit(1)
 
     result = loop.run_until_complete(scanner.loadPortList(ports))
     if not result[0]:
         conditionalClickEcho(verbose, result[1])
-        return False
+        sys.exit(1)
 
     results = loop.run_until_complete(scanner.gatherResults())
     grouped = groupResults(results, activeonly)
@@ -115,4 +112,4 @@ def checkForActive(portsStatus):
 
 
 if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+    main()  # pragma: no cover

@@ -9,30 +9,26 @@ from click.testing import CliRunner
 
 from asyncio_fast_portscanner import asyncio_fast_portscanner
 from asyncio_fast_portscanner import cli
-
-
-@pytest.fixture
-def response():
-    """Sample pytest fixture.
-
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
-
-
-def test_content(response):
-    """Sample pytest test function with the pytest fixture as an argument."""
-    # from bs4 import BeautifulSoup
-    # assert 'GitHub' in BeautifulSoup(response.content).title.string
+import json
 
 
 def test_command_line_interface():
     """Test the CLI."""
     runner = CliRunner()
-    result = runner.invoke(cli.main)
+    """ Test for RANGE + additional port"""
+    result = runner.invoke(cli.scan, ["192.168.0-2.0-255", "22", "-r", "RANGE", "-t", "2", "-a"])
     assert result.exit_code == 0
-    assert 'asyncio_fast_portscanner.cli.main' in result.output
-    help_result = runner.invoke(cli.main, ['--help'])
-    assert help_result.exit_code == 0
-    assert '--help  Show this message and exit.' in help_result.output
+    unJsoned = json.loads(result.output)
+    assert len(unJsoned) == 256 * 3
+
+    """ Test for smaller range"""
+    result = runner.invoke(cli.scan, ["192.168.2.1-128", "22", "-r", "RANGE", "-t", "0.3", "-a"])
+    assert result.exit_code == 0
+    unJsoned = json.loads(result.output)
+    assert len(unJsoned) == 128
+
+    """ Test for CIDR + additional port"""
+    result = runner.invoke(cli.scan, ["192.168.0.0/16", "22", "33", "-r", "CIDR", "-t", "5", "-a"])
+    assert result.exit_code == 0
+    unJsoned = json.loads(result.output)
+    assert len(unJsoned) == 256 * 256
