@@ -10,7 +10,7 @@ import itertools
 
 @click.group()
 def main():
-    sys.exit(1)
+    pass
 
 
 @main.command()
